@@ -35,7 +35,6 @@
     "jest": "^30.2.0",
     "supertest": "^7.1.4",
     "ts-jest": "^29.4.5",
-    "ts-node-dev": "^2.0.0",
-
+    "ts-node-dev": "^2.0.0"
   }
 }
