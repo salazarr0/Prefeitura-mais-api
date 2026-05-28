@@ -1,4 +1,4 @@
-import { connection } from './src/dbConnection';
+import { connection } from '../src/dbConnection';
 
 async function run() {
   const users = await connection('usuarios').select();

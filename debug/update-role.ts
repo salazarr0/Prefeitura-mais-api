@@ -1,4 +1,4 @@
-import { connection } from './src/dbConnection';
+import { connection } from '../src/dbConnection';
 
 async function run() {
   await connection('usuarios').where({ email: 'Robotica.com' }).update({ papel: 'funcionario' });

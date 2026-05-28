@@ -114,7 +114,8 @@ export class DenunciaBusiness {
       // "Enriquece" os dados. Passa em cada denúncia (map) e calcula a prioridade dela.
       const enriched = denuncias.map((d: any) => {
         const prioridade = this.calcularPrioridade(d);
-        return { ...d, prioridade } as Denuncia; // Retorna o objeto original (...d) + o campo novo prioridade.
+        // Converte tinyint(1) do MySQL para boolean real
+        return { ...d, anonimo: Boolean(d.anonimo), prioridade } as Denuncia;
       });
 
       return enriched;
@@ -158,7 +159,8 @@ export class DenunciaBusiness {
       }
       
       const prioridade = this.calcularPrioridade(denuncia);
-      return { ...denuncia, prioridade } as Denuncia;
+      // Converte tinyint(1) do MySQL para boolean real
+      return { ...denuncia, anonimo: Boolean(denuncia.anonimo), prioridade } as Denuncia;
       
     } catch (error: any) {
       throw new Error(error.message || "Erro ao buscar denúncia");
@@ -188,7 +190,8 @@ export class DenunciaBusiness {
       // Retorna a denúncia já com o novo status
       const atualizada = await this.denunciaData.pegarDenunciaPorId(id);
       const prioridade = this.calcularPrioridade(atualizada);
-      return { ...atualizada, prioridade } as Denuncia;
+      // Converte tinyint(1) do MySQL para boolean real
+      return { ...atualizada, anonimo: Boolean(atualizada.anonimo), prioridade } as Denuncia;
 
     } catch (error: any) {
       throw new Error(error.message || "Erro ao atualizar status da denúncia");
