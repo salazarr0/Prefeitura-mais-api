@@ -15,6 +15,7 @@ export class DenunciaData {
 
       const formattedDenuncias = denuncias.map(row => ({
         id: row.id,
+        titulo: row.titulo,
         descricao: row.descricao,
         endereco: row.endereco_denuncia,
         status: row.status,
