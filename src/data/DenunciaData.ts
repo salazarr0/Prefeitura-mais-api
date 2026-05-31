@@ -6,7 +6,7 @@ export class DenunciaData {
       // Equivalente SQL: SELECT * FROM denuncias;
       const denuncias = await connection("denuncias")
         .join("tipo_denuncia", "denuncias.tipo_denuncia_id", "=", "tipo_denuncia.id")
-        .join("usuarios", "denuncias.usuario_id", "=", "usuarios.id")
+        .leftJoin("usuarios", "denuncias.usuario_id", "=", "usuarios.id")
         .select(
           "denuncias.*",
           "tipo_denuncia.nome as tipo_denuncia",
@@ -16,9 +16,9 @@ export class DenunciaData {
       const formattedDenuncias = denuncias.map(row => ({
         id: row.id,
         descricao: row.descricao,
-        endereco: row.endereco,
+        endereco: row.endereco_denuncia,
         status: row.status,
-        tipo:[row.tipo_denuncia],
+        tipo: [row.tipo_denuncia],
         usuario: {
           id: row.usuario_id,
           nome: row.nome_usuario
