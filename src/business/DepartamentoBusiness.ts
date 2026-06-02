@@ -96,7 +96,7 @@ export class DepartamentoBusiness {
       if (typeof horario_funcionamento !== "string" || horario_funcionamento.trim().length < 5) {
         throw new Error("O horário de funcionamento é inválido.");
       }
-      if (typeof gerente_id !== "number" || isNaN(Number(gerente_id))) {
+      if (isNaN(Number(gerente_id))) {
         throw new Error("O ID do gerente deve ser um número válido.");
       }
 
@@ -153,7 +153,7 @@ export class DepartamentoBusiness {
       if (typeof horario_funcionamento !== "string" || horario_funcionamento.trim().length < 5) {
         throw new Error("O horário de funcionamento é inválido.");
       }
-      if (typeof gerente_id !== "number" || isNaN(Number(gerente_id))) {
+      if (isNaN(Number(gerente_id))) {
         throw new Error("O ID do gerente deve ser um número válido.");
       }
 
