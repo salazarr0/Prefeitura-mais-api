@@ -64,6 +64,7 @@ export class UsuarioData {
       const rows = await connection("usuarios")
         .where("usuarios.id", id)
         .leftJoin("denuncias", "usuarios.id", "=", "denuncias.usuario_id")
+        .leftJoin("tipo_denuncia", "denuncias.tipo_denuncia_id", "=", "tipo_denuncia.id")
         .leftJoin("departamentos", "usuarios.id", "=", "departamentos.gerente_id")
         .select(
           "usuarios.id as u_id",
@@ -74,6 +75,8 @@ export class UsuarioData {
           "denuncias.titulo as d_titulo",
           "denuncias.descricao as d_descricao",
           "denuncias.status as d_status",
+          "denuncias.endereco_denuncia as d_endereco",
+          "tipo_denuncia.nome as d_tipo",
           "departamentos.id as dep_id",
           "departamentos.nome as dep_nome",
           "departamentos.endereco as dep_endereco"
@@ -104,7 +107,9 @@ export class UsuarioData {
               id: row.d_id,
               titulo: row.d_titulo,
               descricao: row.d_descricao,
-              status: row.d_status
+              status: row.d_status,
+              endereco: row.d_endereco,
+              tipo: row.d_tipo
             });
           }
         }
