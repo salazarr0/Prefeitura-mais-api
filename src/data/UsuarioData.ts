@@ -3,8 +3,8 @@ import { TipoUsuario, User } from "../types/types";
 export class UsuarioData {
   async pegarUsuarios() {
     try {
-      // SQL: SELECT * FROM usuarios;
-      const users = await connection("usuarios").select();
+      // SQL: SELECT id, nome, email, papel FROM usuarios;
+      const users = await connection("usuarios").select("id", "nome", "email", "papel");
       return users;
     } catch (error: any) {
       throw new Error(error.sqlMessage || error.message);

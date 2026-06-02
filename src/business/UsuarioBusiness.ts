@@ -85,4 +85,13 @@ export class UsuarioBusiness {
       throw new Error(error.message || "Erro inesperado");
     }
   }
+
+  public async getAll() {
+    try {
+      const users = await this.usuarioData.pegarUsuarios();
+      return users;
+    } catch (error: any) {
+      throw new Error(error.message || "Erro inesperado");
+    }
+  }
 }

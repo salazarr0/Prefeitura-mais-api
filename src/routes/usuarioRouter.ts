@@ -18,3 +18,6 @@ usuarioRouter.post("/login", usuarioController.login);
 // GET /usuarios/me
 usuarioRouter.get("/me", authMiddleware.checkLogin,// BARREIRA DE SEGURANÇA
     usuarioController.getProfile);
+
+// GET /usuarios/
+usuarioRouter.get("/", authMiddleware.checkLogin, authMiddleware.checkAdmin,  usuarioController.getAll);

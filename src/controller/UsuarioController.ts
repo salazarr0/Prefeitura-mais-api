@@ -86,4 +86,15 @@ export class UsuarioController {
       res.status(500).send({ error: "Erro não esperado!" });
     }
   };
+
+  public getAll = async (req: Request, res: Response) => {
+    try {
+      const users = await this.userBusiness.getAll();
+      res.status(200).send(users);
+    } catch (error: any) {
+      res.status(500).send({ error: error.message || "Erro não esperado!" });
+    }
+  };
+  
 }
+
