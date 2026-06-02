@@ -86,6 +86,20 @@ export class DepartamentoBusiness {
     gerente_id: Number
   ): Promise<Number> {
     try {
+      // VALIDAÇÕES MAIS RESTRITAS
+      if (typeof nome !== "string" || nome.trim().length < 3) {
+        throw new Error("O nome do departamento é inválido. Deve ter pelo menos 3 caracteres.");
+      }
+      if (typeof endereco !== "string" || endereco.trim().length < 5) {
+        throw new Error("O endereço do departamento é inválido ou muito curto.");
+      }
+      if (typeof horario_funcionamento !== "string" || horario_funcionamento.trim().length < 5) {
+        throw new Error("O horário de funcionamento é inválido.");
+      }
+      if (typeof gerente_id !== "number" || isNaN(Number(gerente_id))) {
+        throw new Error("O ID do gerente deve ser um número válido.");
+      }
+
       // REGRA 1: O gerente informado existe?
       // (Usa a classe UsuarioData para verificar)
       const gerente = await this.usuarioData.pegarUsuarioPeloIdNoBD(gerente_id);
@@ -129,6 +143,20 @@ export class DepartamentoBusiness {
       if (!id || typeof id !== "number" || isNaN(Number(id))) {
         throw new Error("ID inválido");
       }
+      // VALIDAÇÕES MAIS RESTRITAS
+      if (typeof nome !== "string" || nome.trim().length < 3) {
+        throw new Error("O nome do departamento é inválido. Deve ter pelo menos 3 caracteres.");
+      }
+      if (typeof endereco !== "string" || endereco.trim().length < 5) {
+        throw new Error("O endereço do departamento é inválido ou muito curto.");
+      }
+      if (typeof horario_funcionamento !== "string" || horario_funcionamento.trim().length < 5) {
+        throw new Error("O horário de funcionamento é inválido.");
+      }
+      if (typeof gerente_id !== "number" || isNaN(Number(gerente_id))) {
+        throw new Error("O ID do gerente deve ser um número válido.");
+      }
+
       const deptoExiste = await this.departamentoData.pegarDepartamentoPorId(
         id
       );

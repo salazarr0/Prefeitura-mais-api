@@ -83,9 +83,13 @@ export class DepartamentoController {
       if (error.message.includes("Departamento com este nome já existe")) {
         res.status(409).send(error.message);
       } else if (
-        // Se o problema é com o Gerente (não existe ou não é funcionário), retorna 400.
+        // Se o problema é com o Gerente ou Validações de campos, retorna 400.
         error.message.includes("gerente") ||
-        error.message.includes("Gerente")
+        error.message.includes("Gerente") ||
+        error.message.includes("nome do departamento") ||
+        error.message.includes("endereço do departamento") ||
+        error.message.includes("horário de funcionamento") ||
+        error.message.includes("ID do gerente")
       ) {
         res.status(400).send(error.message);
       } else {
@@ -128,7 +132,11 @@ export class DepartamentoController {
         res.status(409).send(error.message); // 409 Conflict: O estado atual do servidor (vínculos) impede a ação.
       } else if (
         error.message.includes("gerente") ||
-        error.message.includes("Gerente")
+        error.message.includes("Gerente") ||
+        error.message.includes("nome do departamento") ||
+        error.message.includes("endereço do departamento") ||
+        error.message.includes("horário de funcionamento") ||
+        error.message.includes("ID do gerente")
       ) {
         res.status(400).send(error.message);
       } else {
