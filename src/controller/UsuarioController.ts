@@ -73,17 +73,19 @@ export class UsuarioController {
         return res.status(500).send({ error: "Payload não existe!" });
       }
 
+      // Fetch full profile data using the ID from the payload
+      const fullProfile = await this.userBusiness.getProfile(userPayload.id);
+
       // Formata o 'iat' (Unix Timestamp) para uma data mais amigável e legível
       if (userPayload.iat) {
         const dataFormatada = new Date(userPayload.iat * 1000).toLocaleString('pt-BR');
-        userPayload.emitidoEm = dataFormatada;
-        delete userPayload.iat; // Remove o timestamp cru
+        (fullProfile as any).emitidoEm = dataFormatada;
       }
 
-      // Devolve os dados do token
-      res.status(200).send(userPayload);
+      // Devolve os dados completos do perfil
+      res.status(200).send(fullProfile);
     } catch (error: any) {
-      res.status(500).send({ error: "Erro não esperado!" });
+      res.status(500).send({ error: error.message || "Erro não esperado!" });
     }
   };
 

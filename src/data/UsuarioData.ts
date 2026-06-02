@@ -58,4 +58,61 @@ export class UsuarioData {
       throw new Error(error.sqlMessage || error.message);
     }
   }
+
+  async pegarPerfilCompleto(id: Number) {
+    try {
+      const rows = await connection("usuarios")
+        .where("usuarios.id", id)
+        .leftJoin("denuncias", "usuarios.id", "=", "denuncias.usuario_id")
+        .leftJoin("departamentos", "usuarios.id", "=", "departamentos.gerente_id")
+        .select(
+          "usuarios.id as u_id",
+          "usuarios.nome as u_nome",
+          "usuarios.email as u_email",
+          "usuarios.papel as u_papel",
+          "denuncias.id as d_id",
+          "denuncias.titulo as d_titulo",
+          "denuncias.descricao as d_descricao",
+          "denuncias.status as d_status",
+          "departamentos.id as dep_id",
+          "departamentos.nome as dep_nome",
+          "departamentos.endereco as dep_endereco"
+        );
+
+      if (!rows || rows.length === 0) {
+        return null;
+      }
+
+      const userProfile = {
+        id: rows[0].u_id,
+        nome: rows[0].u_nome,
+        email: rows[0].u_email,
+        papel: rows[0].u_papel,
+        departamento: rows[0].dep_id ? {
+          id: rows[0].dep_id,
+          nome: rows[0].dep_nome,
+          endereco: rows[0].dep_endereco
+        } : null,
+        denuncias: [] as any[]
+      };
+
+      for (let row of rows) {
+        if (row.d_id) {
+          const exists = userProfile.denuncias.find(d => d.id === row.d_id);
+          if (!exists) {
+            userProfile.denuncias.push({
+              id: row.d_id,
+              titulo: row.d_titulo,
+              descricao: row.d_descricao,
+              status: row.d_status
+            });
+          }
+        }
+      }
+
+      return userProfile;
+    } catch (error: any) {
+      throw new Error(error.sqlMessage || error.message);
+    }
+  }
 }

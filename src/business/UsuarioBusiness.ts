@@ -94,4 +94,16 @@ export class UsuarioBusiness {
       throw new Error(error.message || "Erro inesperado");
     }
   }
+
+  public async getProfile(userId: number) {
+    try {
+      const userProfile = await this.usuarioData.pegarPerfilCompleto(userId);
+      if (!userProfile) {
+        throw new Error("Usuário não encontrado");
+      }
+      return userProfile;
+    } catch (error: any) {
+      throw new Error(error.message || "Erro inesperado");
+    }
+  }
 }
