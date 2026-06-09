@@ -3,6 +3,8 @@ import { denunciaRouter } from "./routes/denunciasRouter";
 import { usuarioRouter } from "./routes/usuarioRouter";
 import { departamentoRouter } from "./routes/departamentoRouter";
 import { tipoDenunciaRouter } from "./routes/tipoDenunciaRouter";
+import { confirmacoesRouter } from "./routes/confirmacoesRouter";
+import { comentariosRouter } from "./routes/comentariosRouter";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -10,7 +12,9 @@ dotenv.config();
 app.use("/denuncias", denunciaRouter);
 app.use("/usuarios", usuarioRouter);
 app.use("/departamentos", departamentoRouter);
-app.use("/tipo-denuncia", tipoDenunciaRouter)
+app.use("/tipo-denuncia", tipoDenunciaRouter);
+app.use("/confirmacoes", confirmacoesRouter);
+app.use("/comentarios", comentariosRouter);
 
 const PORT = process.env.PORT || 3003;
 

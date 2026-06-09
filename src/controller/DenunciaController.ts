@@ -218,6 +218,38 @@ export class DenunciaController {
     }
   };
 
+  // Atualizar prioridade da denúncia (apenas funcionários)
+  public atualizarPrioridade = async (req: Request, res: Response) => {
+    try {
+      // Exige que esteja autenticado (injetado pelo Middleware)
+      const usuarioPayload = (req as any).usuario;
+      if (!usuarioPayload || !usuarioPayload.id) {
+        return res.status(401).send({ error: "Usuário não autenticado" });
+      }
+
+      const id = Number(req.params.id);
+      if (!id || isNaN(id)) {
+        return res.status(400).send({ error: "Id de denúncia inválido" });
+      }
+
+      const { prioridade } = req.body;
+      if (!prioridade) {
+        return res.status(400).send({ error: "Campo 'prioridade' é obrigatório" });
+      }
+
+      const atualizada = await this.denunciaBusiness.atualizarPrioridadeDenuncia(id, Number(prioridade));
+      res.status(200).send(atualizada);
+    } catch (error: any) {
+      if (error.message && error.message.includes("não encontrada")) {
+        return res.status(404).send({ error: error.message });
+      }
+      if (error.message && error.message.includes("Prioridade inválida")) {
+        return res.status(400).send({ error: error.message });
+      }
+      res.status(500).send({ error: error.message });
+    }
+  };
+
   // Confirmar denúncia (usuário autenticado)
   public confirmarDenuncia = async (req: Request, res: Response) => {
     try {

@@ -42,9 +42,14 @@ export class ComentarioData {
     try {
       // Executa: SELECT * FROM comentarios WHERE denuncia_id = ?
       const rows = await connection("comentarios")
-        .where({ denuncia_id }) // Filtro
-        .select(); // Busca todas as colunas
-      return rows; // Retorna um array com os resultados
+        .join("usuarios", "comentarios.usuario_id", "=", "usuarios.id")
+        .where("comentarios.denuncia_id", denuncia_id)
+        .select(
+          "comentarios.*",
+          "usuarios.nome as nome_usuario"
+        )
+        .orderBy("comentarios.data", "desc");
+      return rows;
     } catch (error: any) {
       throw new Error(error.sqlMessage || error.message);
     }

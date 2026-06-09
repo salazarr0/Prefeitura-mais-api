@@ -7,10 +7,17 @@ export class DenunciaData {
       const denuncias = await connection("denuncias")
         .join("tipo_denuncia", "denuncias.tipo_denuncia_id", "=", "tipo_denuncia.id")
         .leftJoin("usuarios", "denuncias.usuario_id", "=", "usuarios.id")
+        .leftJoin("confirmacoes", "denuncias.id", "=", "confirmacoes.denuncia_id")
         .select(
           "denuncias.*",
           "tipo_denuncia.nome as tipo_denuncia",
           "usuarios.nome as nome_usuario"
+        )
+        .count("confirmacoes.id as votos")
+        .groupBy(
+          "denuncias.id",
+          "tipo_denuncia.nome",
+          "usuarios.nome"
         );
 
       const formattedDenuncias = denuncias.map(row => ({
@@ -19,6 +26,8 @@ export class DenunciaData {
         descricao: row.descricao,
         endereco: row.endereco_denuncia,
         status: row.status,
+        prioridade: row.prioridade,
+        votos: row.votos,
         tipo: [row.tipo_denuncia],
         usuario: {
           id: row.usuario_id,
@@ -36,11 +45,18 @@ export class DenunciaData {
       const denuncias = await connection("denuncias")
         .join("tipo_denuncia", "denuncias.tipo_denuncia_id", "=", "tipo_denuncia.id")
         .leftJoin("usuarios", "denuncias.usuario_id", "=", "usuarios.id")
+        .leftJoin("confirmacoes", "denuncias.id", "=", "confirmacoes.denuncia_id")
         .where("tipo_denuncia.departamento_id", departamento_id)
         .select(
           "denuncias.*",
           "tipo_denuncia.nome as tipo_denuncia",
           "usuarios.nome as nome_usuario"
+        )
+        .count("confirmacoes.id as votos")
+        .groupBy(
+          "denuncias.id",
+          "tipo_denuncia.nome",
+          "usuarios.nome"
         );
 
       const formattedDenuncias = denuncias.map(row => ({
@@ -49,6 +65,8 @@ export class DenunciaData {
         descricao: row.descricao,
         endereco: row.endereco_denuncia,
         status: row.status,
+        prioridade: row.prioridade,
+        votos: row.votos,
         tipo: [row.tipo_denuncia],
         usuario: {
           id: row.usuario_id,
@@ -138,6 +156,7 @@ export class DenunciaData {
             // Se tiver ID de usuário, salva. Se não tiver, salva NULL no banco.
             usuario_id: denuncia.usuario_id || null,
             tipo_denuncia_id: denuncia.tipo_denuncia_id,
+            prioridade: denuncia.prioridade || 1,
           },
         ],
         ["id"]
@@ -166,6 +185,17 @@ export class DenunciaData {
       const linhasAfetadas = await connection("denuncias")
         .where({ id })
         .update({ status });
+      return linhasAfetadas;
+    } catch (error: any) {
+      throw new Error(error.sqlMessage || error.message);
+    }
+  }
+
+  async atualizarPrioridadeDenuncia(id: number, prioridade: number) {
+    try {
+      const linhasAfetadas = await connection("denuncias")
+        .where({ id })
+        .update({ prioridade });
       return linhasAfetadas;
     } catch (error: any) {
       throw new Error(error.sqlMessage || error.message);

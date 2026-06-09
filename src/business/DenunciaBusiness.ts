@@ -79,36 +79,15 @@ export class DenunciaBusiness {
 
     // Define arrays de palavras-chave para cada nível de gravidade.
     const nivel3 = [
-      "acidente elétrico",
-      "acidente eletrico",
-      "choque elétrico",
-      "choque eletrico",
-      "eletric",
-      "incêndio",
-      "incendio",
-      "fogo",
-      "explosão",
-      "explosao",
-      "vítima",
-      "vitima",
+      "acidente elétrico", "acidente eletrico", "choque elétrico", "choque eletrico", "eletric",
+      "incêndio", "incendio", "fogo", "explosão", "explosao", "vítima", "vitima", "risco de morte", "ferido", "urgente"
     ];
     const nivel2 = [
-      "queda de energia",
-      "apagão",
-      "apagao",
-      "queda energia",
-      "vazamento",
-      "alagamento",
-      "desabamento",
+      "queda de energia", "apagão", "apagao", "queda energia",
+      "vazamento", "alagamento", "desabamento", "buraco na via", "poste caído", "poste caido", "cratera", "árvore caída", "arvore caida", "perigo"
     ];
     const nivel1 = [
-      "lixo",
-      "entulho",
-      "lixo na calçada",
-      "lixo na calcada",
-      "calçada suja",
-      "calçada suja",
-      "poda de árvore",
+      "lixo", "entulho", "lixo na calçada", "lixo na calcada", "calçada suja", "poda de árvore", "buraco", "iluminação"
     ];
 
     // Verifica se o texto contem alguma palavra do nível 3. Se sim, retorna prioridade 3.
@@ -124,17 +103,11 @@ export class DenunciaBusiness {
 
   public async pegarDenuncias(): Promise<Denuncia[]> {
     try {
-      // Busca os dados brutos do banco
       const denuncias = await this.denunciaData.pegarDenuncias();
-
-      // "Enriquece" os dados. Passa em cada denúncia (map) e calcula a prioridade dela.
-      const enriched = denuncias.map((d: any) => {
-        const prioridade = this.calcularPrioridade(d);
-        // Converte tinyint(1) do MySQL para boolean real
-        return { ...d, anonimo: Boolean(d.anonimo), prioridade } as Denuncia;
+      // Não precisa mais calcular, já vem do banco
+      return denuncias.map((d: any) => {
+        return { ...d, anonimo: Boolean(d.anonimo) } as Denuncia;
       });
-
-      return enriched;
     } catch (error: any) {
       // Tratamento de erro padrão
       throw new Error(
@@ -159,8 +132,7 @@ export class DenunciaBusiness {
       const denuncias = await this.denunciaData.pegarDenunciasPorDepartamento(departamento_id);
 
       const enriched = denuncias.map((d: any) => {
-        const prioridade = this.calcularPrioridade(d);
-        return { ...d, anonimo: Boolean(d.anonimo), prioridade } as Denuncia;
+        return { ...d, anonimo: Boolean(d.anonimo) } as Denuncia;
       });
 
       return enriched.sort(
@@ -194,10 +166,7 @@ export class DenunciaBusiness {
       if (!denuncia) {
         throw new Error("Denúncia não encontrada");
       }
-      
-      const prioridade = this.calcularPrioridade(denuncia);
-      // Converte tinyint(1) do MySQL para boolean real
-      return { ...denuncia, anonimo: Boolean(denuncia.anonimo), prioridade } as Denuncia;
+      return { ...denuncia, anonimo: Boolean(denuncia.anonimo) } as Denuncia;
       
     } catch (error: any) {
       throw new Error(error.message || "Erro ao buscar denúncia");
@@ -226,9 +195,7 @@ export class DenunciaBusiness {
 
       // Retorna a denúncia já com o novo status
       const atualizada = await this.denunciaData.pegarDenunciaPorId(id);
-      const prioridade = this.calcularPrioridade(atualizada);
-      // Converte tinyint(1) do MySQL para boolean real
-      return { ...atualizada, anonimo: Boolean(atualizada.anonimo), prioridade } as Denuncia;
+      return { ...atualizada, anonimo: Boolean(atualizada.anonimo) } as Denuncia;
 
     } catch (error: any) {
       throw new Error(error.message || "Erro ao atualizar status da denúncia");
@@ -342,24 +309,46 @@ export class DenunciaBusiness {
         anonimo = true;
       }
 
-      // Monta o objeto para o banco (Status padrão: 'Pendente')
+      // Monta o objeto para o banco, calculando a prioridade aqui mesmo
+      const prioridadeCalculada = this.calcularPrioridade(denunciaInput);
+
       const toInsert = {
         titulo: denunciaInput.titulo,
         descricao: denunciaInput.descricao,
         endereco_denuncia: denunciaInput.endereco_denuncia,
         tipo_denuncia_id: denunciaInput.tipo_denuncia_id,
         status: denunciaInput.status || "Pendente",
+        prioridade: prioridadeCalculada,
         anonimo,
         usuario_id,
       };
       // Salva no banco
       const newId = await this.denunciaData.criarDenuncia(toInsert);
-      // Calcula a prioridade imediatamente para já devolver na resposta da API
-      const prioridade = this.calcularPrioridade(toInsert as any);
 
-      return { id: newId, ...toInsert, prioridade };
+      return { id: newId, ...toInsert };
     } catch (error: any) {
       throw new Error(error.message || "Erro ao criar denúncia");
+    }
+  }
+
+  // Atualiza a prioridade manualmente (apenas funcionários)
+  public async atualizarPrioridadeDenuncia(id: number, prioridade: number): Promise<Denuncia> {
+    try {
+      if (prioridade < 1 || prioridade > 3) {
+        throw new Error("Prioridade inválida. Os valores permitidos são de 1 a 3.");
+      }
+
+      const denuncia = await this.denunciaData.pegarDenunciaPorId(id);
+      if (!denuncia) {
+        throw new Error("Denúncia não encontrada");
+      }
+
+      await this.denunciaData.atualizarPrioridadeDenuncia(id, prioridade);
+
+      const atualizada = await this.denunciaData.pegarDenunciaPorId(id);
+      return { ...atualizada, anonimo: Boolean(atualizada.anonimo) } as Denuncia;
+    } catch (error: any) {
+      throw new Error(error.message || "Erro ao atualizar prioridade da denúncia");
     }
   }
 }

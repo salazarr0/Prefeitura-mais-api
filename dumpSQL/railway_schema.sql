@@ -67,6 +67,7 @@ CREATE TABLE IF NOT EXISTS denuncias (
     endereco_denuncia VARCHAR(500)  NOT NULL,
     status            ENUM('Pendente', 'Em análise', 'Resolvido') COLLATE utf8mb4_unicode_ci
                                     NOT NULL DEFAULT 'Pendente',
+    prioridade        INT           NOT NULL DEFAULT 1,
     anonimo           TINYINT(1)    NOT NULL DEFAULT 0,
     usuario_id        INT UNSIGNED  NULL,
     tipo_denuncia_id  INT UNSIGNED  NOT NULL,

@@ -57,6 +57,16 @@ denunciaRouter.patch(
   denunciaController.atualizarStatus
 );
 
+// PATCH /denuncias/:id/prioridade
+// Atualiza a prioridade de uma denúncia. Requer autenticação e perfil de funcionário.
+// Body: { "prioridade": 1 | 2 | 3 }
+denunciaRouter.patch(
+  "/:id/prioridade",
+  checkLogin,
+  checkAdmin,
+  denunciaController.atualizarPrioridade
+);
+
 // POST /denuncias/
 denunciaRouter.post("/", denunciaController.postDenuncia);
 

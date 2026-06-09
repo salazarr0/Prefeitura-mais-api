@@ -41,6 +41,17 @@ export class ConfirmacaoData {
     }
   }
 
+  async removerConfirmacao(usuario_id: number, denuncia_id: number) {
+    try {
+      await connection("confirmacoes")
+        .where({ usuario_id, denuncia_id })
+        .delete();
+      return true;
+    } catch (error: any) {
+      throw new Error(error.sqlMessage || error.message);
+    }
+  }
+
   async contarConfirmacoesPorDenuncia(denuncia_id: number) {
     try {
       // 1. Função de Agregação (COUNT)

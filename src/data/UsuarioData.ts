@@ -115,7 +115,14 @@ export class UsuarioData {
         }
       }
 
-      return userProfile;
+      const estatisticas = {
+        total: userProfile.denuncias.length,
+        pendente: userProfile.denuncias.filter(d => d.status === "Pendente").length,
+        emAnalise: userProfile.denuncias.filter(d => d.status === "Em análise").length,
+        resolvido: userProfile.denuncias.filter(d => d.status === "Resolvido").length
+      };
+
+      return { ...userProfile, estatisticas };
     } catch (error: any) {
       throw new Error(error.sqlMessage || error.message);
     }
