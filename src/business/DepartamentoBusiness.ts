@@ -107,9 +107,9 @@ export class DepartamentoBusiness {
         throw new Error("ID de gerente não encontrado");
       }
       // REGRA 2: O usuário escolhido tem permissão para ser gerente?
-      // Aqui você define que apenas usuários com papel 'funcionario' podem gerenciar departamentos.
-      if (gerente.papel !== "funcionario") {
-        throw new Error("Gerente selecionado não tem o papel 'funcionario'");
+      // Aqui você define que apenas usuários com papel 'funcionario' ou 'adm' podem gerenciar departamentos.
+      if (gerente.papel !== "funcionario" && gerente.papel !== "adm") {
+        throw new Error("Gerente selecionado não tem o papel 'funcionario' ou 'adm'");
       }
       // REGRA 3: Já existe um departamento com esse nome?
       // Evita duplicidade (ex: criar dois departamentos "Obras").
@@ -167,8 +167,8 @@ export class DepartamentoBusiness {
       if (!gerente) {
         throw new Error("ID de gerente não encontrado");
       }
-      if (gerente.papel !== "funcionario") {
-        throw new Error("Gerente selecionado não tem o papel 'funcionario'");
+      if (gerente.papel !== "funcionario" && gerente.papel !== "adm") {
+        throw new Error("Gerente selecionado não tem o papel 'funcionario' ou 'adm'");
       }
       const nomeExistente =
         await this.departamentoData.pegarDepartamentoPorNome(nome);

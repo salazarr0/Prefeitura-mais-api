@@ -18,20 +18,20 @@ tipoDenunciaRouter.get("/:id", tipoDenunciaController.pegarTipoDenunciaPorId);
 
 tipoDenunciaRouter.post("/",
     authMiddleware.checkLogin,// 1. Verifica Token (Autenticação)
-    authMiddleware.checkAdmin,// 2. Verifica Papel 'funcionario' (Autorização)
+    authMiddleware.checkSuperAdmin,// 2. Verifica Papel 'adm' (Autorização)
     tipoDenunciaController.criarTipoDenuncia);// 3. Executa
 
 tipoDenunciaRouter.put(
     "/:id", 
     authMiddleware.checkLogin, 
-    authMiddleware.checkAdmin, 
+    authMiddleware.checkSuperAdmin, 
     tipoDenunciaController.atualizarTipoDenuncia
 );
 
 tipoDenunciaRouter.delete(
     "/:id",
     authMiddleware.checkLogin,
-    authMiddleware.checkAdmin,
+    authMiddleware.checkSuperAdmin,
     tipoDenunciaController.deletarTipoDenuncia
 );
 

@@ -1,4 +1,4 @@
-export type TipoUsuario = 'cidadao' | 'funcionario';
+export type TipoUsuario = 'cidadao' | 'funcionario' | 'adm';
 export type StatusDenuncia = 'Pendente'| 'Em análise'| 'Resolvido';
 
 export type User = {
@@ -6,7 +6,8 @@ export type User = {
     nome: string;
     email: string;
     senha_hash: string;
-    papel: TipoUsuario
+    papel: TipoUsuario;
+    departamento_id?: Number;
 };
 
 export type Denuncia = {

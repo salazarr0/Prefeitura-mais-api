@@ -52,6 +52,22 @@ export class DenunciaBusiness {
     };
   }
 
+  // Estatísticas para dashboard do funcionário
+  public async pegarEstatisticasPorDepartamento(departamento_id: number): Promise<EstatisticasDenuncias> {
+    const total = await this.denunciaData.contarTotalDenunciasPorDepartamento(departamento_id);
+    const porStatus = await this.denunciaData.contarPorStatusPorDepartamento(departamento_id);
+    // Não precisa contar por departamento porque já estamos filtrando por ele, mas para manter a assinatura do tipo
+    // podemos retornar o próprio departamento
+    return {
+      total_denuncias: Number(total),
+      denuncias_por_status: porStatus.map((r: any) => ({
+        status: r.status,
+        contagem: Number(r.contagem),
+      })),
+      denuncias_por_departamento: [],
+    };
+  }
+
   // calcula prioridade a partir do título/descrição
   private calcularPrioridade(denuncia: any): number {
     // Concatena Título + Descrição e joga tudo para minúsculo para facilitar a busca.
@@ -135,6 +151,27 @@ export class DenunciaBusiness {
       (a: Denuncia, b: Denuncia) =>
         Number(b.prioridade || 0) - Number(a.prioridade || 0)
     );
+  }
+
+  // retorna lista ordenada por prioridade filtrada por departamento
+  public async pegarDenunciasOrdenadasPorPrioridadeEDepartamento(departamento_id: number): Promise<Denuncia[]> {
+    try {
+      const denuncias = await this.denunciaData.pegarDenunciasPorDepartamento(departamento_id);
+
+      const enriched = denuncias.map((d: any) => {
+        const prioridade = this.calcularPrioridade(d);
+        return { ...d, anonimo: Boolean(d.anonimo), prioridade } as Denuncia;
+      });
+
+      return enriched.sort(
+        (a: Denuncia, b: Denuncia) =>
+          Number(b.prioridade || 0) - Number(a.prioridade || 0)
+      );
+    } catch (error: any) {
+      throw new Error(
+        "Denúncias não encontradas: " + (error.message || error.sqlMessage)
+      );
+    }
   }
 
   // retorna denúncias sem expor quem denunciou (anonimizadas)

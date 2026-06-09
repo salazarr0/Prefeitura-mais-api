@@ -21,6 +21,13 @@ denunciaRouter.get(
     checkAdmin, // 2º Barreira: É funcionário? (Autorização/RBAC)
     denunciaController.getEstatisticas);// 3º Ação: Entrega os dados sensíveis.
 
+// GET /denuncias/estatisticas/:departamento_id
+denunciaRouter.get(
+    "/estatisticas/:departamento_id", 
+    checkLogin, 
+    checkAdmin, 
+    denunciaController.getEstatisticasFuncionario);
+
 // GET /denuncias/anonimas
 // Lista denúncias sem revelar o autor.
 denunciaRouter.get("/anonimas", denunciaController.getDenunciasAnonimas);
@@ -28,6 +35,13 @@ denunciaRouter.get("/anonimas", denunciaController.getDenunciasAnonimas);
 // GET /denuncias/fila
 // Retorna a lista ordenada por gravidade (algoritmo de prioridade).
 denunciaRouter.get("/fila", denunciaController.getFilaPrioridade);
+
+// GET /denuncias/fila/:departamento_id
+denunciaRouter.get(
+    "/fila/:departamento_id", 
+    checkLogin, 
+    checkAdmin, 
+    denunciaController.getFilaFuncionario);
 
 // GET /denuncias/:id
 // Busca uma denúncia específica pelo ID

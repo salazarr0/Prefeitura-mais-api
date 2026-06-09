@@ -18,6 +18,20 @@ export class DenunciaController {
     }
   };
 
+  public getEstatisticasFuncionario = async (req: Request, res: Response) => {
+    try {
+      const departamento_id = Number(req.params.departamento_id);
+      if (!departamento_id || isNaN(departamento_id)) {
+        return res.status(400).send({ error: "ID de departamento inválido" });
+      }
+
+      const stats = await this.denunciaBusiness.pegarEstatisticasPorDepartamento(departamento_id);
+      res.status(200).send(stats);
+    } catch (error: any) {
+      res.status(500).send({ error: error.message });
+    }
+  };
+
   // Postar comentário em uma denúncia (usuário autenticado)
   public postarComentario = async (req: Request, res: Response) => {
     try {
@@ -99,6 +113,22 @@ export class DenunciaController {
     try {
       const fila =
         await this.denunciaBusiness.pegarDenunciasOrdenadasPorPrioridade();
+      res.status(200).send(fila);
+    } catch (error: any) {
+      res.status(500).send({ error: error.message });
+    }
+  };
+
+  // Retorna fila de denúncias filtrada por departamento
+  public getFilaFuncionario = async (req: Request, res: Response) => {
+    try {
+      const departamento_id = Number(req.params.departamento_id);
+      if (!departamento_id || isNaN(departamento_id)) {
+        return res.status(400).send({ error: "ID de departamento inválido" });
+      }
+
+      const fila =
+        await this.denunciaBusiness.pegarDenunciasOrdenadasPorPrioridadeEDepartamento(departamento_id);
       res.status(200).send(fila);
     } catch (error: any) {
       res.status(500).send({ error: error.message });

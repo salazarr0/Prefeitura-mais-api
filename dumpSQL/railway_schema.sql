@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
     nome       VARCHAR(255)  NOT NULL,
     email      VARCHAR(255)  NOT NULL UNIQUE,
     senha_hash VARCHAR(255)  NOT NULL,
-    papel      ENUM('cidadao', 'funcionario') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'cidadao',
+    papel      ENUM('cidadao', 'funcionario', 'adm') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'cidadao',
     PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS comentarios (
     data         DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP,
     usuario_id   INT UNSIGNED  NOT NULL,
     denuncia_id  INT UNSIGNED  NOT NULL,
-    tipo_usuario ENUM('cidadao', 'funcionario') COLLATE utf8mb4_unicode_ci NOT NULL,
+    tipo_usuario ENUM('cidadao', 'funcionario', 'adm') COLLATE utf8mb4_unicode_ci NOT NULL,
     PRIMARY KEY (id),
     CONSTRAINT fk_comentario_usuario
         FOREIGN KEY (usuario_id) REFERENCES usuarios (id)

@@ -25,18 +25,18 @@ departamentoRouter.get("/nome/:nome", departamentoController.pegarDepartamentoPo
 
 departamentoRouter.post("/",
     authMiddleware.checkLogin,// 1. Você está logado?
-    authMiddleware.checkAdmin,// 2. Você é funcionário? (Se for cidadão comum, barra aqui)
+    authMiddleware.checkSuperAdmin,// 2. Você é adm?
     departamentoController.criarDepartamento// 3. Executa a criação.
 );
 
 departamentoRouter.put("/:id",
     authMiddleware.checkLogin,
-    authMiddleware.checkAdmin,
+    authMiddleware.checkSuperAdmin,
     departamentoController.atualizarDepartamento
 );
 
 departamentoRouter.delete("/:id",
     authMiddleware.checkLogin,
-    authMiddleware.checkAdmin,
+    authMiddleware.checkSuperAdmin,
     departamentoController.deletarDepartamento
 );

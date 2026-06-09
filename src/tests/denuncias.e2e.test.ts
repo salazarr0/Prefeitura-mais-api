@@ -42,7 +42,7 @@ describe("Fluxo Principal E2E - Da Criação à Denúncia", () => {
         expect(resSignup.status).toBe(201);
 
 
-        await connection("usuarios").where({ email: "admin@teste.com" }).update({ papel: "funcionario" });
+        await connection("usuarios").where({ email: "admin@teste.com" }).update({ papel: "adm" });
 
         const resLogin = await request(app).post("/usuarios/login").send({
             email: "admin@teste.com",

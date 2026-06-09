@@ -36,20 +36,20 @@ describe("Testes da DepartamentoBusiness", () => {
         const input = {
             nome: "Depto Falha", 
             endereco: "Rua X", 
-            horario: "08h", 
+            horario: "08h-18h", 
             gerenteId: 1 
         };
 
         await expect(departamentoBusiness.criarDepartamento(
             input.nome, input.endereco, input.horario, input.gerenteId
-        )).rejects.toThrow("Gerente selecionado não tem o papel 'funcionario'");
+        )).rejects.toThrow("Gerente selecionado não tem o papel 'funcionario' ou 'adm'");
     });
 
     test("Deve falhar ao criar se o nome já existe", async () => {
         const input = {
             nome: "Departamento Já Existente", 
             endereco: "Rua Y", 
-            horario: "08h", 
+            horario: "08h-18h", 
             gerenteId: 2
         };
 

@@ -56,13 +56,27 @@ export const checkAdmin = (req: Request, res: Response, next: NextFunction) => {
     // 2. VERIFICAÇÃO DE PAPEL (Role Check)
     // Se o papel NÃO for 'funcionario', bloqueia.
 
-    if (usuarioPayLoad.papel !== 'funcionario') {
+    if (usuarioPayLoad.papel !== 'funcionario' && usuarioPayLoad.papel !== 'adm') {
         // Retorna 403 Forbidden (Proibido).
         // Diferença importante: 
         // 401 = Não sei quem é você. 
         // 403 = Sei quem é você, mas você não tem autorização para isso.
-        return res.status(403).send({ error: "Acesso negado. Rota restrita a funcionários." });
+        return res.status(403).send({ error: "Acesso negado. Rota restrita a funcionários e administradores." });
     }
-    // 3. Se for funcionário, deixa passar.
+    // 3. Se for funcionário ou adm, deixa passar.
+    next();
+}
+
+export const checkSuperAdmin = (req: Request, res: Response, next: NextFunction) => {
+    const usuarioPayLoad = (req as any).usuario;
+
+    if (!usuarioPayLoad) {
+        return res.status(401).send({ error: "usuario não encontrado" });
+    }
+
+    if (usuarioPayLoad.papel !== 'adm') {
+        return res.status(403).send({ error: "Acesso negado. Rota restrita a administradores." });
+    }
+    
     next();
 }

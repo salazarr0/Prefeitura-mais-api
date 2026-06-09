@@ -31,10 +31,48 @@ export class DenunciaData {
     }
   }
 
+  async pegarDenunciasPorDepartamento(departamento_id: number) {
+    try {
+      const denuncias = await connection("denuncias")
+        .join("tipo_denuncia", "denuncias.tipo_denuncia_id", "=", "tipo_denuncia.id")
+        .leftJoin("usuarios", "denuncias.usuario_id", "=", "usuarios.id")
+        .where("tipo_denuncia.departamento_id", departamento_id)
+        .select(
+          "denuncias.*",
+          "tipo_denuncia.nome as tipo_denuncia",
+          "usuarios.nome as nome_usuario"
+        );
+
+      const formattedDenuncias = denuncias.map(row => ({
+        id: row.id,
+        titulo: row.titulo,
+        descricao: row.descricao,
+        endereco: row.endereco_denuncia,
+        status: row.status,
+        tipo: [row.tipo_denuncia],
+        usuario: {
+          id: row.usuario_id,
+          nome: row.nome_usuario
+        }
+      }));
+      return formattedDenuncias;
+    } catch (error: any) {
+      throw new Error(error.sqlMessage || error.message);
+    }
+  }
+
   async contarTotalDenuncias() {
     // Equivalente SQL: SELECT COUNT(*) as total FROM denuncias;
     const result = await connection("denuncias").count("* as total");
     // O banco devolve um array [{ total: 150 }], pegamos o valor direto.
+    return result[0].total;
+  }
+
+  async contarTotalDenunciasPorDepartamento(departamento_id: number) {
+    const result = await connection("denuncias")
+      .join("tipo_denuncia", "denuncias.tipo_denuncia_id", "=", "tipo_denuncia.id")
+      .where("tipo_denuncia.departamento_id", departamento_id)
+      .count("* as total");
     return result[0].total;
   }
 
@@ -44,6 +82,16 @@ export class DenunciaData {
     // FROM denuncias
     // GROUP BY status;
     const result = await connection("denuncias")
+      .select("status")
+      .count("* as contagem")
+      .groupBy("status");
+    return result;
+  }
+
+  async contarPorStatusPorDepartamento(departamento_id: number) {
+    const result = await connection("denuncias")
+      .join("tipo_denuncia", "denuncias.tipo_denuncia_id", "=", "tipo_denuncia.id")
+      .where("tipo_denuncia.departamento_id", departamento_id)
       .select("status")
       .count("* as contagem")
       .groupBy("status");
