@@ -135,10 +135,13 @@ export class DenunciaBusiness {
         return { ...d, anonimo: Boolean(d.anonimo) } as Denuncia;
       });
 
-      return enriched.sort(
-        (a: Denuncia, b: Denuncia) =>
-          Number(b.prioridade || 0) - Number(a.prioridade || 0)
-      );
+      return enriched.sort((a: any, b: any) => {
+        const diffPrioridade = Number(b.prioridade || 0) - Number(a.prioridade || 0);
+        if (diffPrioridade !== 0) {
+          return diffPrioridade;
+        }
+        return Number(b.votos || 0) - Number(a.votos || 0);
+      });
     } catch (error: any) {
       throw new Error(
         "Denúncias não encontradas: " + (error.message || error.sqlMessage)
