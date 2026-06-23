@@ -11,7 +11,7 @@ export class UsuarioBusiness {
     this.usuarioData = usuarioData || new UsuarioData();
   }
 
-  public async postarNovoUsuario(nome: string, email: string, senha: string) {
+  public async postarNovoUsuario(nome: string, email: string, senha: string, papel?: TipoUsuario) {
     try {
       // 1. Verifica se o e-mail já existe no banco.
       // Não podemos ter dois usuários com o mesmo e-mail.
@@ -26,9 +26,8 @@ export class UsuarioBusiness {
         // NUNCA salvamos a senha pura (plain text) no banco.
         const senhaHash = await bcrypt.hash(senha, 10);
         // 3. Define o papel padrão.
-        // Todo mundo que se cadastra sozinho começa como 'cidadao'.
-        // (Para criar um admin ou funcionário, provavelmente seria direto no banco ou outra rota).
-        const tipo: TipoUsuario = "cidadao";
+        // Se a requisição enviou um papel específico (ex: admin, funcionario), nós o utilizamos, senão 'cidadao'.
+        const tipo: TipoUsuario = papel || "cidadao";
         // 4. Salva no banco enviando o HASH, não a senha original.
         const newUser = await this.usuarioData.criarUsuarioNoBancoDeDados(
           nome,

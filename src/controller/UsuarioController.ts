@@ -7,7 +7,7 @@ export class UsuarioController {
   register = async (req: Request, res: Response) => {
     try {
       // Extrai dados do corpo da requisição
-      const { nome, email, senha } = req.body;
+      const { nome, email, senha, papel } = req.body;
       // Validação de Entrada:
       // Se faltar qualquer um dos 3 campos, rejeita imediatamente.
       if (!nome || !email || !senha) {
@@ -19,7 +19,8 @@ export class UsuarioController {
         const newUser = await this.userBusiness.postarNovoUsuario(
           nome,
           email,
-          senha
+          senha,
+          papel
         );
         // Retorna 201 Created (Sucesso na criação)
         res.status(201).send(newUser);
