@@ -1,6 +1,6 @@
 import express from "express";
 import { ConfirmacaoController } from "../controller/ConfirmacaoController";
-import { checkLogin } from "../middlewares/auth";
+import { checkLogin, optionalLogin } from "../middlewares/auth";
 
 export const confirmacoesRouter = express.Router();
 const confirmacaoController = new ConfirmacaoController();
@@ -16,4 +16,10 @@ confirmacoesRouter.post(
   "/:id",
   checkLogin,
   confirmacaoController.toggleConfirmacao
+);
+
+confirmacoesRouter.get(
+  "/:id/status",
+  optionalLogin,
+  confirmacaoController.getStatus
 );

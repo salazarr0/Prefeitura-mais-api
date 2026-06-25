@@ -45,6 +45,35 @@ export const checkLogin = (req: Request, res: Response, next: NextFunction) => {
         res.status(401).send({ error: "Token inválido ou expirado" });
     }
 }
+
+export const optionalLogin = (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const authheader = req.headers.authorization;
+        if (!authheader) {
+            return next();
+        }
+
+        const partes = authheader.split(" ");
+        if (partes.length !== 2) {
+            return next();
+        }
+
+        const token = partes[1];
+        const chaveSecreta = process.env.JWT_KEY as string;
+
+        try {
+            const payload = jsonwebtoken.verify(token, chaveSecreta);
+            (req as any).usuario = payload;
+        } catch (error) {
+            // Se falhar a verificação, ignoramos e continuamos sem usuário
+        }
+
+        next();
+    } catch (error) {
+        next();
+    }
+}
+
 export const checkAdmin = (req: Request, res: Response, next: NextFunction) => {
     // 1. Pega os dados do usuário que o 'checkLogin' (que rodou antes) colocou na requisição.
     const usuarioPayLoad = (req as any).usuario;

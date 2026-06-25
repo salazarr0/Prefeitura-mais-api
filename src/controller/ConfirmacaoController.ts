@@ -47,11 +47,10 @@ export class ConfirmacaoController {
       
       let confirmadoPeloUsuario = false;
       if (usuario) {
-        // We need to expose a method in Business to check this
-        // For now let's just ignore or implement it quickly
+        confirmadoPeloUsuario = await this.confirmacaoBusiness.checkUsuarioConfirmou(usuario.id, denuncia_id);
       }
 
-      res.status(200).send({ count, confirmadoPeloUsuario });
+      res.status(200).send({ count, confirmadoPeloUsuario, userConfirmed: confirmadoPeloUsuario });
     } catch (error: any) {
       res.status(400).send({ message: error.message });
     }

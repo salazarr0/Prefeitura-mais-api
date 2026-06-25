@@ -41,4 +41,13 @@ export class ConfirmacaoBusiness {
       throw new Error(error.message || "Erro inesperado ao contar confirmações");
     }
   }
+
+  public async checkUsuarioConfirmou(usuario_id: number, denuncia_id: number): Promise<boolean> {
+    try {
+      if (!usuario_id || !denuncia_id) return false;
+      return await this.confirmacaoData.existeConfirmacao(usuario_id, denuncia_id);
+    } catch (error) {
+      return false;
+    }
+  }
 }
